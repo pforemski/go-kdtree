@@ -40,9 +40,9 @@ func (query *Range) search(node *KDNode, world Range, out Points) Points {
 
 // has_point() returns true if given point is within the query
 func (query *Range) has_point(point *Point) bool {
-	for axis := 0; axis < len(*point); axis++ {
-		if (*point)[axis] < query.min[axis] { return false }
-		if (*point)[axis] > query.max[axis] { return false }
+	for axis := 0; axis < len(point.V); axis++ {
+		if point.V[axis] < query.min[axis] { return false }
+		if point.V[axis] > query.max[axis] { return false }
 	}
 	return true
 }
@@ -73,7 +73,7 @@ func (world *Range) limit_left(parent *KDNode) Range {
 	// upper limits: leave all but parent.axis
 	r.max = make([]float64, len(world.max))
 	copy(r.max, world.max)
-	r.max[parent.axis] = (*parent.point)[parent.axis] // all elements < median
+	r.max[parent.axis] = parent.point.V[parent.axis] // all elements < median
 
 	return r
 }
@@ -86,7 +86,7 @@ func (world *Range) limit_right(parent *KDNode) Range {
 	// botton limits: leave all but parent.axis
 	r.min = make([]float64, len(world.min))
 	copy(r.min, world.min)
-	r.min[parent.axis] = (*parent.point)[parent.axis] // all elements >= median
+	r.min[parent.axis] = parent.point.V[parent.axis] // all elements >= median
 
 	return r
 }

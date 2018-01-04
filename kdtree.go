@@ -19,24 +19,30 @@ type KDNode struct {
 }
 
 // Point represents an abstract point in n-dimensional space
-type Point []float64
+type Point struct {
+	// point coordinates in all dimensions
+	V []float64
+
+	// auxilliary data
+	D interface{}
+}
 
 // Points is a collection of memory pointers to points
 type Points []*Point
 
 // Range represents a range in n-dimensional space (a rectangle)
 type Range struct {
-	min    []float64
-	max    []float64
+	min     []float64
+	max     []float64
 }
 
 // ------------------------------------------
 
 // NewPoint() creates a new point
 func NewPoint(vals ...float64) *Point {
-	ret := make(Point, 0, len(vals))
-	for i := range vals { ret = append(ret, vals[i]) }
-	return &ret
+	ret := &Point{}
+	ret.V = vals
+	return ret
 }
 
 // NewInfiniteRange() creates a range that contains everything
@@ -61,20 +67,20 @@ func NewKDTree(points Points) *KDNode {
 
 // ------------------------------------------
 
-// Search() performs range search for [reference - margin, reference + margin],
+// Search() performs range search for [ref - margin, ref + margin],
 // starting at given kd-tree node, returning a slice of pointers to matching points
-func (node *KDNode) Search(reference *Point, margin []float64) Points {
-	// translate reference+margin into range
-	query := NewInfiniteRange(len(*reference))
-	for axis := 0; axis < len(*reference) && axis < len(margin); axis++ {
+func (node *KDNode) Search(ref *Point, margin []float64) Points {
+	// translate ref+margin into range
+	query := NewInfiniteRange(len(ref.V))
+	for axis := 0; axis < len(ref.V) && axis < len(margin); axis++ {
 		if margin[axis] >= 0 {
-			query.min[axis] = (*reference)[axis] - margin[axis]
-			query.max[axis] = (*reference)[axis] + margin[axis]
+			query.min[axis] = ref.V[axis] - margin[axis]
+			query.max[axis] = ref.V[axis] + margin[axis]
 		}
 	}
 
 	// prepare info on current's node worldview
-	world := NewInfiniteRange(len(*reference))
+	world := NewInfiniteRange(len(ref.V))
 
 	// query
 	points := make(Points, 0, 32) // NB: pre-allocate for 32 results
@@ -103,7 +109,7 @@ func insert(points Points, depth int) *KDNode {
 	if len(points) == 0 { return nil }
 
 	node := &KDNode{
-		axis: (depth % len(*points[0])),
+		axis: (depth % len(points[0].V)),
 		count: len(points),
 	}
 
@@ -116,7 +122,7 @@ func insert(points Points, depth int) *KDNode {
 	for i := range points {
 		if points[i] == median {
 			continue
-		} else if (*points[i])[node.axis] < (*median)[node.axis] {
+		} else if points[i].V[node.axis] < median.V[node.axis] {
 			points_below = append(points_below, points[i])
 		} else {
 			points_above = append(points_above, points[i])

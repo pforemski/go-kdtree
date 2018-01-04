@@ -23,7 +23,7 @@ func (a sample_points) Swap(i,j int) {
 }
 
 func (a sample_points) Less(i,j int) bool {
-	return (*a.points[i])[a.axis] < (*a.points[j])[a.axis]
+	return a.points[i].V[a.axis] < a.points[j].V[a.axis]
 }
 
 // sample_median() finds median on given axis using uniform sampling
