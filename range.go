@@ -56,8 +56,10 @@ func (query *Range) has_range(world Range) int {
 		if query.min[axis] >= world.max[axis] { return 0 } // no intersection possible
 		if query.max[axis] <  world.min[axis] { return 0 } // no intersection possible
 
-		if query.max[axis] < world.max[axis] { ret = 1          // partial intersection
-		} else if query.min[axis] > world.min[axis] { ret = 1 } // partial intersection
+		if ret == 2 {
+			if query.max[axis] < world.max[axis] { ret = 1 } // partial intersection
+			if query.min[axis] > world.min[axis] { ret = 1 } // partial intersection
+		}
 	}
 
 	return ret
