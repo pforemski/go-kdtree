@@ -4,7 +4,8 @@ A [kd-tree](https://en.wikipedia.org/wiki/K-d_tree) implementation in Golang tha
 
  * n-dimensional points,
  * range searches,
- * median search using sampling.
+ * median search using sampling,
+ * auxiliary data attached to points.
 
 Documentation at [godoc.org](https://godoc.org/github.com/pforemski/go-kdtree)
 
